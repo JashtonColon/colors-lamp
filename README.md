@@ -68,4 +68,17 @@ colors-lamp/
 
 * **Assumptions:** Readers or evaluators have standard web browsers and REST API testing tool access (e.g., Postman).
 * **Limitations:** Database connections use basic password authentication configured for a lab demonstration environment.
-* **AI Usage:** AI tools were utilized in accordance with class policy for documentation generation, Git workflow guidance, and repository structuring assistance.
+
+AI Assistance Disclosure
+
+This project was developed with assistance from generative AI tools:
+
+Tool: Gemini (Google)
+
+Dates: September 27, 2026
+
+Scope: DigitalOcean Droplet SSH troubleshooting, directory restructuring, local file staging, Git incremental commit workflow execution, and repository documentation authoring
+
+Nature of use: Troubleshooting SSH configuration and terminal shortcut conflicts, guiding step-by-step Git commands, and generating README documentation aligned with project submission requirements
+
+All AI-generated commands and documentation were reviewed, tested, and modified to meet assignment requirements. Final implementation reflects my understanding of the concepts.
