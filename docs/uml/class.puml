@@ -1,0 +1,88 @@
+@startuml class
+title COLORS Web Application - Class Diagram
+skinparam classAttributeIconSize 0
+hide empty members
+
+package "Frontend (public/)" {
+  class "index.html" as IndexPage <<page>> {
+    loginName : text input
+    loginPassword : password input
+    loginButton : button
+    loginResult : span
+  }
+  class "color.html" as ColorPage <<page>> {
+    userName : span
+    searchText : text input
+    colorList : paragraph
+    colorText : text input
+    colorAddResult : span
+    colorSearchResult : span
+  }
+  class "code.js" as CodeJS <<script>> {
+    - urlBase : String = "http://jashtonlabcop4331.xyz/LAMPAPI"
+    - extension : String = "php"
+    - userId : int = 0
+    - firstName : String
+    - lastName : String
+    + doLogin() : void
+    + addColor() : void
+    + searchColor() : void
+    + doLogout() : void
+    - saveCookie() : void
+    - readCookie() : void
+  }
+  class "md5.js" as MD5 <<library>> {
+    + md5(input : String) : String
+  }
+}
+
+package "Backend API (api/ -> /LAMPAPI)" {
+  class "Login.php" as LoginAPI <<endpoint>> {
+    + POST(login, password) : {id, firstName, lastName, error}
+    - getRequestInfo() : array
+    - sendResultInfoAsJson(obj) : void
+    - returnWithError(err) : void
+    - returnWithInfo(firstName, lastName, id) : void
+  }
+  class "AddColor.php" as AddAPI <<endpoint>> {
+    + POST(color, userId) : {error}
+    - getRequestInfo() : array
+    - sendResultInfoAsJson(obj) : void
+    - returnWithError(err) : void
+  }
+  class "SearchColors.php" as SearchAPI <<endpoint>> {
+    + POST(search, userId) : {results[], error}
+    - getRequestInfo() : array
+    - sendResultInfoAsJson(obj) : void
+    - returnWithError(err) : void
+    - returnWithInfo(searchResults) : void
+  }
+}
+
+package "Database (MySQL COP4331)" {
+  class Users <<table>> {
+    + ID : int <<PK>>
+    + firstName : varchar
+    + lastName : varchar
+    + Login : varchar
+    + Password : varchar {MD5 hash}
+  }
+  class Colors <<table>> {
+    + ID : int <<PK>>
+    + Name : varchar
+    + UserID : int <<FK>>
+  }
+}
+
+IndexPage ..> CodeJS : onclick doLogin()
+ColorPage ..> CodeJS : onclick searchColor(),\naddColor(), doLogout()
+IndexPage ..> MD5 : loads
+CodeJS ..> MD5 : uses
+CodeJS ..> LoginAPI : POST JSON
+CodeJS ..> AddAPI : POST JSON
+CodeJS ..> SearchAPI : POST JSON
+LoginAPI ..> Users : SELECT
+AddAPI ..> Colors : INSERT
+SearchAPI ..> Colors : SELECT ... LIKE
+Users "1" -- "0..*" Colors : owns >
+@enduml

@@ -1,0 +1,72 @@
+@startuml activity
+title COLORS Web Application - Activity Diagram
+|User|
+start
+:Open index.html;
+repeat
+  :Enter username and password;
+  :Click "Login";
+  |Browser (code.js)|
+  :doLogin(): hash password with md5();
+  :POST {login, password} to Login.php;
+  |Server (PHP / MySQL)|
+  :SELECT ID, firstName, lastName FROM Users
+   WHERE Login=? AND Password=?;
+  :Return JSON {id, firstName, lastName, error};
+  |Browser (code.js)|
+backward:Show "User/Password combination incorrect";
+repeat while (id < 1?) is (yes)
+->no;
+:saveCookie() (expires in 20 minutes);
+:Redirect to color.html;
+|User|
+repeat
+  :Choose an action on color.html;
+  if (Action?) then (Search Color)
+    :Enter search text and click "Search Color";
+    |Browser (code.js)|
+    :searchColor(): readCookie();
+    if (Valid userId in cookie?) then (no)
+      :Redirect to index.html;
+      stop
+    else (yes)
+    endif
+    :POST {search, userId} to SearchColors.php;
+    |Server (PHP / MySQL)|
+    :SELECT Name FROM Colors
+     WHERE Name LIKE %search% AND UserID=?;
+    :Return JSON {results[], error};
+    |Browser (code.js)|
+    :Display matching colors in colorList;
+  elseif () then (Add Color)
+    |User|
+    :Enter color name and click "Add Color";
+    |Browser (code.js)|
+    :addColor(): readCookie();
+    if (Valid userId in cookie?) then (no)
+      :Redirect to index.html;
+      stop
+    else (yes)
+    endif
+    :POST {userId, color} to AddColor.php;
+    |Server (PHP / MySQL)|
+    :INSERT INTO Colors (Name, UserID);
+    :Return JSON {error};
+    |Browser (code.js)|
+    if (error empty?) then (yes)
+      :Show "Color has been added";
+      :Clear input field;
+    else (no)
+      :Show error message;
+    endif
+  else (Log Out)
+    |Browser (code.js)|
+    :doLogout(): clear variables and expire cookie;
+    :Redirect to index.html;
+    stop
+  endif
+  |User|
+repeat while (Continue?) is (yes)
+->no;
+stop
+@enduml

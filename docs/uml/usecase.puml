@@ -1,0 +1,39 @@
+@startuml usecase
+title COLORS Web Application - Use Case Diagram
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+
+actor "Registered User" as User
+database "MySQL Database\n(COP4331)" as DB <<system>>
+
+rectangle "COLORS Web Application" {
+  usecase "Log In" as UC_Login
+  usecase "Hash Password (MD5)" as UC_Hash
+  usecase "Validate Session\n(read cookie)" as UC_Session
+  usecase "Add Color" as UC_Add
+  usecase "Search Colors" as UC_Search
+  usecase "Log Out" as UC_Logout
+  usecase "Display Error Message" as UC_Error
+}
+
+User --> UC_Login
+User --> UC_Add
+User --> UC_Search
+User --> UC_Logout
+
+UC_Login ..> UC_Hash : <<include>>
+UC_Add ..> UC_Session : <<include>>
+UC_Search ..> UC_Session : <<include>>
+UC_Error .> UC_Login : <<extend>>\n[invalid credentials]
+UC_Error .> UC_Add : <<extend>>\n[DB error]
+
+UC_Login --> DB
+UC_Add --> DB
+UC_Search --> DB
+
+note right of UC_Login
+  Users are pre-created in the database;
+  the app has no registration use case.
+end note
+@enduml
