@@ -2,7 +2,7 @@ import js from "@eslint/js";
 import globals from "globals";
 
 export default [
-  { ignores: ["node_modules/**", "js/md5.js", "LAMPAPI/**"] },
+    { ignores: ["node_modules/**", "**/md5.js", "**/LAMPAPI/**"] },
   js.configs.recommended,
   {
     files: ["**/*.js"],
